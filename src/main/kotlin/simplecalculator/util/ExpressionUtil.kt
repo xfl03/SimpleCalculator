@@ -21,6 +21,11 @@ class ExpressionUtil {
     }
 
     /**
+     * Check is the Char legal
+     */
+    fun isLegal(ch:Int)=isNum(ch)||getOperator(ch)!=null
+
+    /**
      * is the Char in '0'-'9'
      */
     fun isNum(ch: Int) = ch.toChar() in '0'..'9'
@@ -34,6 +39,19 @@ class ExpressionUtil {
      * Convert operator Char to Operator enum
      */
     fun getOperator(op: Int) = operatorMap[op.toChar()]
+
+    /**
+     * Check if expression can begin with the operator
+     * Allowed: + - ( [ {
+     */
+    fun canBeginWith(operator: Operator)=
+            operator==Operator.PLUS||operator==Operator.MINUS||isLeftBracket(operator)
+    /**
+     * Check if expression can end with the operator
+     * Allowed: ) ] }
+     */
+    fun canEndWith(operator: Operator)=
+            isRightBracket(operator)
 
     /**
      * is the operator a left bracket
@@ -52,15 +70,6 @@ class ExpressionUtil {
      */
     fun isRightBracket(operator: Operator) =
             operator == Operator.RIGHT_S_BRACKET || operator == Operator.RIGHT_M_BRACKET || operator == Operator.RIGHT_B_BRACKET
-
-    /**
-     * compute "nums.pop()1 operator nums.pop()0" and push to nums stack
-     */
-    fun computeOperator(operator: Operator, nums: Stack<Int>): Int {
-        val right = nums.pop()
-        val left = nums.pop()
-        return nums.push(computeOperator(left, operator, right))
-    }
 
     /**
      * compute "left operator right"
