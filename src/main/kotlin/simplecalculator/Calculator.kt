@@ -2,6 +2,7 @@ package simplecalculator
 
 import simplecalculator.util.Operator
 import simplecalculator.util.ExpressionUtil
+import simplecalculator.util.Fraction
 import java.text.ParseException
 import java.util.*
 
@@ -10,9 +11,9 @@ import java.util.*
  * @param expression
  */
 class Calculator(private val expression: String) {
-    private var result = 0
+    private var result = Fraction(0)
 
-    private val nums = Stack<Int>()
+    private val nums = Stack<Fraction>()
     private val ops = Stack<Operator>()
     private val util = ExpressionUtil.instance!!
 
@@ -27,8 +28,9 @@ class Calculator(private val expression: String) {
         var negativeFlag = false//Is next number negative?
         var lastOp = Operator.PLUS// last Useful Operator
         var index = -1
+        var lastPoint=-1
 
-        nums.push(0)
+        nums.push(Fraction(0))
         ops.push(Operator.PLUS)
 
         expression.chars().forEach {
@@ -41,20 +43,31 @@ class Calculator(private val expression: String) {
             if (!util.isLegal(it))
                 throw ParseException("illegal char '${it.toChar()}'", index)
 
-            if (util.isNum(it)) {
-                var num = util.toNum(it)
+            if(it.toChar()=='.'){
+                if(lastPoint>=0)
+                    throw ParseException("too more '.'",index)
+                lastPoint=0
+                if(!numFlag)
+                    nums.push(Fraction(0))
+                numFlag=true
+            }else if (util.isNum(it)) {
+                var num = util.toNum(it).toLong()
                 if (negativeFlag) {
                     negativeFlag = false
                     num = -num
                 }
                 if (numFlag)
-                    nums.push(nums.pop() * 10 + num)
+                    if(lastPoint>=0)
+                        nums.push(nums.pop() .add(Fraction(num.toLong(),util.pow(10,lastPoint+1))))
+                        else
+                    nums.push(nums.pop() .multiply(Fraction(10)).add(Fraction(num)))
                 else
-                    nums.push(num)
+                    nums.push(Fraction(num))
 
                 firstFlag = false
                 numFlag = true
             } else {
+                lastPoint=-1
                 val op = util.getOperator(it)!!
 
                 if (firstFlag || (!numFlag && !util.isRightBracket(lastOp))) {
@@ -112,7 +125,7 @@ class Calculator(private val expression: String) {
 
     @Throws(ParseException::class)
     private fun compute(condition: (Operator) -> (Boolean)) {
-        val numsTemp = Stack<Int>()
+        val numsTemp = Stack<Fraction>()
         val opsTemp = Stack<Operator>()
         numsTemp.push(nums.pop())
 

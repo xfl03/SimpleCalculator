@@ -7,8 +7,10 @@ Simple Calculator in Kotlin
 
 ## Run
 ````
-java -jar .\build\libs\SimpleCalculator-1.0.jar
+java -jar .\build\libs\SimpleCalculator-1.1-SNAPSHOT.jar -m
 ````
 ### Argument
 `-d` `--debug` DebugMode  
-`-f` `--fix` Auto Fix Right Bracket in the end
+`-f` `--fix` Auto Fix Right Bracket in the end  
+`-m` `--mixed` Use Mixed Fraction  
+`-i` `--int` Integer Only  

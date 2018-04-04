@@ -7,11 +7,17 @@ import java.text.ParseException
 
 var debugMode = false
 var fixRight = false
+var mixedFraction = false
+var intOnly = false
 fun main(args: Array<String>) {
     if (args.contains("-d") || args.contains("--debug"))
         debugMode = true
     if (args.contains("-f") || args.contains("--fix"))
         fixRight = true
+    if (args.contains("-m") || args.contains("--mixed"))
+        mixedFraction = true
+    if (args.contains("-i") || args.contains("--int"))
+        intOnly = true
 
     val br = BufferedReader(InputStreamReader(System.`in`))
 
@@ -21,9 +27,8 @@ fun main(args: Array<String>) {
         expression = br.readLine()
         val cal = Calculator(expression)
         println("Result: ")
-        println(cal.getResult())
+        cal.getResult().print()
     } catch (e: Exception) {
-
         when (e) {
             is ParseException -> {
                 println("Syntax Error!")

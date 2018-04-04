@@ -1,6 +1,7 @@
 package simplecalculator.util
 
 import simplecalculator.debugMode
+import simplecalculator.intOnly
 import java.util.*
 
 /**
@@ -8,22 +9,22 @@ import java.util.*
  */
 class ExpressionUtil {
     private val operatorMap = HashMap<Char, Operator>()
-    private val computeAlgorithms = HashMap<Operator, (Int, Int) -> Int>()
+    private val computeAlgorithms = HashMap<Operator, (Fraction, Fraction) -> Fraction>()
 
     init {
         Operator.values().forEach { operatorMap[it.ch] = it }
 
-        computeAlgorithms[Operator.PLUS] = { a, b -> a + b }
-        computeAlgorithms[Operator.MINUS] = { a, b -> a - b }
-        computeAlgorithms[Operator.TIMES] = { a, b -> a * b }
-        computeAlgorithms[Operator.DIVIDE] = { a, b -> a / b }
-        computeAlgorithms[Operator.POW] = { a, b -> pow(a, b) }
+        computeAlgorithms[Operator.PLUS] = { a, b -> a.add(b) }
+        computeAlgorithms[Operator.MINUS] = { a, b -> a.decline(b) }
+        computeAlgorithms[Operator.TIMES] = { a, b -> a.multiply(b) }
+        computeAlgorithms[Operator.DIVIDE] = { a, b -> a.divide(b) }
+        //computeAlgorithms[Operator.POW] = { a, b -> pow(a, b) }
     }
 
     /**
      * Check is the Char legal
      */
-    fun isLegal(ch:Int)=isNum(ch)||getOperator(ch)!=null
+    fun isLegal(ch: Int) = isNum(ch) || getOperator(ch) != null || (ch.toChar() == '.' && !intOnly)
 
     /**
      * is the Char in '0'-'9'
@@ -44,13 +45,14 @@ class ExpressionUtil {
      * Check if expression can begin with the operator
      * Allowed: + - ( [ {
      */
-    fun canBeginWith(operator: Operator)=
-            operator==Operator.PLUS||operator==Operator.MINUS||isLeftBracket(operator)
+    fun canBeginWith(operator: Operator) =
+            operator == Operator.PLUS || operator == Operator.MINUS || isLeftBracket(operator)
+
     /**
      * Check if expression can end with the operator
      * Allowed: ) ] }
      */
-    fun canEndWith(operator: Operator)=
+    fun canEndWith(operator: Operator) =
             isRightBracket(operator)
 
     /**
@@ -75,15 +77,16 @@ class ExpressionUtil {
      * compute "left operator right"
      * Example: 1+2
      */
-    fun computeOperator(left: Int, operator: Operator, right: Int): Int {
+    fun computeOperator(left: Fraction, operator: Operator, right: Fraction): Fraction {
         val t = computeAlgorithms[operator]!!.invoke(left, right)
         if (debugMode)
             println("[Compute] $left ${operator.ch} $right = $t")
         return t
     }
 
-    private fun pow(a: Int, b: Int): Int {
-        var ret = 1
+
+    fun pow(a: Int, b: Int): Long {
+        var ret = 1L
         (1..b).forEach {
             ret *= a
         }
@@ -116,8 +119,9 @@ class ExpressionUtil {
 enum class Operator(val ch: Char, val priority: Short) {
     PLUS('+', 0), MINUS('-', 1),
     TIMES('*', 2), DIVIDE('/', 2),
-    POW('^', 3),
-    LEFT_S_BRACKET('(', 10), RIGHT_S_BRACKET(')', 10),
+    //POW('^', 3),
+    LEFT_S_BRACKET('(', 10),
+    RIGHT_S_BRACKET(')', 10),
     LEFT_M_BRACKET('[', 11), RIGHT_M_BRACKET(']', 11),
     LEFT_B_BRACKET('{', 12), RIGHT_B_BRACKET('}', 12)
 }
