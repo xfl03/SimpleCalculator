@@ -1,5 +1,8 @@
 package simplecalculator.util
 
+import simplecalculator.debugMode
+import java.util.*
+
 /**
  * Tool Class for Expression ( Number & Operator )
  */
@@ -51,15 +54,20 @@ class ExpressionUtil {
             operator == Operator.RIGHT_S_BRACKET || operator == Operator.RIGHT_M_BRACKET || operator == Operator.RIGHT_B_BRACKET
 
     /**
-     * get previous operator
+     * compute "nums.pop() operator nums.pop()" and push to nums stack
      */
-    fun getPreOperator(operator: Operator) = Operator.values()[operator.ordinal - 1]
+    fun computeOperator(operator: Operator, nums: Stack<Int>): Int = nums.push(computeOperator(nums.pop(), operator, nums.pop()))
 
     /**
      * compute "left operator right"
      * Example: 1+2
      */
-    fun computeOperator(left: Int, operator: Operator, right: Int) = computeAlgorithms[operator]!!.invoke(left, right)
+    fun computeOperator(left: Int, operator: Operator, right: Int): Int {
+        val t = computeAlgorithms[operator]!!.invoke(left, right)
+        if (debugMode)
+            println("[Compute] $left ${operator.ch} $right = $t")
+        return t
+    }
 
     private fun pow(a: Int, b: Int): Int {
         var ret = 1

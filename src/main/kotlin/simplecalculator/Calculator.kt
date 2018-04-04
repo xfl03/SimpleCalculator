@@ -25,8 +25,9 @@ class Calculator(val expression: String) {
         ops.push(Operator.PLUS)
 
         expression.chars().forEach {
-            //println(it.toChar())
-            if(it.toChar()==' ')
+            if (debugMode)
+                println("[Read In] ${it.toChar()}")
+            if (it.toChar() == ' ')//Ignore space
                 return@forEach
 
             if (util.isNum(it)) {
@@ -43,9 +44,8 @@ class Calculator(val expression: String) {
 
                 var preOp = ops.pop()
                 if (util.isRightBracket(op)) {
-                    val leftOp = util.getPreOperator(op)
-                    while (preOp != leftOp) {
-                        nums.push(util.computeOperator(nums.pop(), preOp, nums.pop()))
+                    while (preOp.priority != op.priority) {
+                        util.computeOperator(preOp, nums)
                         preOp = ops.pop()
                     }
                     return@forEach
@@ -55,7 +55,7 @@ class Calculator(val expression: String) {
                     ops.push(preOp)
                 else {
                     while (preOp.priority > op.priority && !util.isLeftBracket(preOp)) {
-                        nums.push(util.computeOperator(nums.pop(), preOp, nums.pop()))
+                        util.computeOperator(preOp, nums)
                         preOp = ops.pop()
                     }
                     ops.push(preOp)
@@ -64,8 +64,8 @@ class Calculator(val expression: String) {
             }
         }
 
-        while (ops.isNotEmpty()&&nums.size>=2)
-            nums.push(util.computeOperator(nums.pop(), ops.pop(), nums.pop()))
+        while (ops.size > 1)
+            util.computeOperator(ops.pop(), nums)
         result = nums.pop()
     }
 
