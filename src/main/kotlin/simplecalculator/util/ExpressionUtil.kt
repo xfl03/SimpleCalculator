@@ -13,11 +13,11 @@ class ExpressionUtil {
     init {
         Operator.values().forEach { operatorMap[it.ch] = it }
 
-        computeAlgorithms[Operator.PLUS] = { a, b -> b + a }
-        computeAlgorithms[Operator.MINUS] = { a, b -> b - a }
-        computeAlgorithms[Operator.TIMES] = { a, b -> b * a }
-        computeAlgorithms[Operator.DIVIDE] = { a, b -> b / a }
-        computeAlgorithms[Operator.POW] = { a, b -> pow(b, a) }
+        computeAlgorithms[Operator.PLUS] = { a, b -> a + b }
+        computeAlgorithms[Operator.MINUS] = { a, b -> a - b }
+        computeAlgorithms[Operator.TIMES] = { a, b -> a * b }
+        computeAlgorithms[Operator.DIVIDE] = { a, b -> a / b }
+        computeAlgorithms[Operator.POW] = { a, b -> pow(a, b) }
     }
 
     /**
@@ -54,9 +54,13 @@ class ExpressionUtil {
             operator == Operator.RIGHT_S_BRACKET || operator == Operator.RIGHT_M_BRACKET || operator == Operator.RIGHT_B_BRACKET
 
     /**
-     * compute "nums.pop() operator nums.pop()" and push to nums stack
+     * compute "nums.pop()1 operator nums.pop()0" and push to nums stack
      */
-    fun computeOperator(operator: Operator, nums: Stack<Int>): Int = nums.push(computeOperator(nums.pop(), operator, nums.pop()))
+    fun computeOperator(operator: Operator, nums: Stack<Int>): Int {
+        val right = nums.pop()
+        val left = nums.pop()
+        return nums.push(computeOperator(left, operator, right))
+    }
 
     /**
      * compute "left operator right"
