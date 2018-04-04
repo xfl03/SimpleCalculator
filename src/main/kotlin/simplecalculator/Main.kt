@@ -4,12 +4,14 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import java.text.ParseException
-import java.util.*
 
 var debugMode = false
+var fixRight = false
 fun main(args: Array<String>) {
     if (args.contains("-d") || args.contains("--debug"))
         debugMode = true
+    if (args.contains("-f") || args.contains("--fix"))
+        fixRight = true
 
     val br = BufferedReader(InputStreamReader(System.`in`))
 

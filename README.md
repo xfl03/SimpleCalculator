@@ -7,9 +7,8 @@ Simple Calculator in Kotlin
 
 ## Run
 ````
-java -jar .\build\libs\SimpleCalculator-1.0-SNAPSHOT.jar
+java -jar .\build\libs\SimpleCalculator-1.0.jar
 ````
-Or run in debug mode  
-````
-java -jar .\build\libs\SimpleCalculator-1.0-SNAPSHOT.jar --debug
-````
+### Argument
+`-d` `--debug` DebugMode  
+`-f` `--fix` Auto Fix Right Bracket in the end

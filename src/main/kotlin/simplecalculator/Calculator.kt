@@ -134,8 +134,12 @@ class Calculator(private val expression: String) {
         //Back forward compute
         temp = ops.pop()
         while (condition(temp)) {
-            if (util.isLeftBracket(temp))
-                throw ParseException("no right bracket for '${temp.ch}'", expression.indexOf(temp.ch))
+            if (util.isLeftBracket(temp)){
+                if(!fixRight)
+                    throw ParseException("no right bracket for '${temp.ch}'", expression.indexOf(temp.ch))
+                temp=ops.pop()
+                continue
+            }
             val right = nums.pop()
             val left = nums.pop()
             nums.push(util.computeOperator(left, temp, right))
