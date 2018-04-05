@@ -79,7 +79,7 @@ data class Fraction(private var numerator: Long, private var denominator: Long =
         var a = if (mixedFraction) numerator / denominator else 0L
         var b = numerator - a * denominator
         var c = denominator
-        if (b % c == 0L) {
+        if (!mixedFraction && b % c == 0L) {
             a = b / c
             b = 0L
         }

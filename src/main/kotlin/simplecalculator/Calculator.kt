@@ -114,7 +114,7 @@ class Calculator(private val expression: String) {
 
                     //For decline
                     preOp = ops.pop()
-                    if (ops.isNotEmpty() && preOp.priority > op.priority && !util.isLeftBracket(preOp))
+                    if (ops.isNotEmpty() && preOp.priority >= op.priority && !util.isLeftBracket(preOp))
                         compute(preOp)
                     else
                         ops.push(preOp)
