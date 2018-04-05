@@ -37,23 +37,24 @@ fun main(args: Array<String>) {
                 val sb0 = StringBuilder()
                 (1..e.errorOffset).forEach { sb0.append(' ') }
                 sb0.append('^')
-                println(sb0)
+                print(sb0)
             }
             is ArithmeticException -> {
                 println("Math Error!")
-                println("Caused by: ${e.localizedMessage}")
+                print("Caused by: ${e.localizedMessage}")
             }
             is IOException -> {
                 println("IO Exception!")
-                println("Caused by: ${e.localizedMessage}")
+                print("Caused by: ${e.localizedMessage}")
             }
             else -> {
                 println("Unknown Exception!")
                 println("Exception: ${e.javaClass}")
-                println("Caused by: ${e.localizedMessage}")
+                print("Caused by: ${e.localizedMessage}")
             }
         }
         if (debugMode) {
+            println()
             println("[Error] Stack Trace:")
             Thread.sleep(100)//Avoid async output
             e.printStackTrace()
