@@ -120,8 +120,7 @@ enum class Operator(val ch: Char, val priority: Short) {
     PLUS('+', 0), MINUS('-', 1),
     TIMES('*', 2), DIVIDE('/', 2),
     //POW('^', 3),
-    LEFT_S_BRACKET('(', 10),
-    RIGHT_S_BRACKET(')', 10),
+    LEFT_S_BRACKET('(', 10), RIGHT_S_BRACKET(')', 10),
     LEFT_M_BRACKET('[', 11), RIGHT_M_BRACKET(']', 11),
     LEFT_B_BRACKET('{', 12), RIGHT_B_BRACKET('}', 12)
 }

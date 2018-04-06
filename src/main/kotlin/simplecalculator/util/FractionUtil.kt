@@ -2,30 +2,41 @@ package simplecalculator.util
 
 import simplecalculator.intOnly
 import simplecalculator.mixedFraction
+import simplecalculator.util.FractionUtil.fill
+import simplecalculator.util.FractionUtil.gcd
 
 object FractionUtil {
     fun gcd(a: Long, b: Long): Long = if (b == 0L) a else gcd(b, a % b)
-
+    fun fill(sb: StringBuilder, num: Int, ch: Char = ' ') {
+        (0 until num).forEach { sb.append(ch) }
+    }
 }
 
 /**
  * Fraction Class
  *
- *  numerator
- * -----------
- * denominator
+ *   numerator
+ * -------------
+ *  denominator
  */
 data class Fraction(private var numerator: Long, private var denominator: Long = 1) {
     init {
         if (denominator == 0L)
             throw ArithmeticException("/ by zero")
+
         if (intOnly) {
             numerator /= denominator
             denominator = 1
         } else {
-            val gcd = FractionUtil.gcd(numerator, denominator)
+            //reduction
+            val gcd = gcd(numerator, denominator)
             numerator /= gcd
             denominator /= gcd
+
+            if (denominator < 0) {
+                numerator = -numerator
+                denominator = -denominator
+            }
         }
     }
 
@@ -61,10 +72,10 @@ data class Fraction(private var numerator: Long, private var denominator: Long =
             f.numerator * denominator
     )
 
-    override fun toString() = "$numerator" + if (denominator == 1L) "" else " / $denominator"
+    override fun toString() = "$numerator" + (if (denominator == 1L) "" else " / $denominator")
 
     /**
-     * Format and print fraction
+     * Format fraction
      *
      * if mixedFraction:
      *   b
@@ -75,56 +86,54 @@ data class Fraction(private var numerator: Long, private var denominator: Long =
      * -
      * c
      */
+    fun format(): String {
+        val line0 = StringBuilder()
+        val line1 = StringBuilder()
+        val line2 = StringBuilder()
+
+        formatInteger(line0, line1, line2)
+        formatFraction(line0, line1, line2)
+
+        val ret = StringBuilder()
+        if (line0.isNotBlank())
+            ret.append(line0).append("\r\n")
+        ret.append(line1).append("\r\n")
+        if (line2.isNotBlank())
+            ret.append(line2).append("\r\n")
+        return ret.substring(0, ret.length - 2)
+    }
+
+    private fun formatInteger(line0: StringBuilder, line1: StringBuilder, line2: StringBuilder) {
+        val a = if (mixedFraction || denominator == 1L) numerator / denominator else 0
+
+        var aStr = (if (numerator < 0) "-" else "") + if (a != 0L) Math.abs(a) else ""
+        if (aStr.isNotEmpty()) {
+            aStr += " "
+        }
+
+        fill(line0, aStr.length)
+        line1.append(aStr)
+        fill(line2, aStr.length)
+    }
+
+    private fun formatFraction(line0: StringBuilder, line1: StringBuilder, line2: StringBuilder) {
+        val bStr = Math.abs(if (mixedFraction || denominator == 1L) numerator % denominator else numerator).toString()
+        if (bStr == "0")//No need to print fraction
+            return
+        val cStr = denominator.toString()
+
+        val d = (Math.abs(bStr.length - cStr.length) + 1) / 2
+        fill(if (bStr.length < cStr.length) line0 else line2, d)
+
+        line0.append(' ').append(bStr)
+        fill(line1, Math.max(bStr.length, cStr.length) + 2, '-')
+        line2.append(' ').append(cStr)
+    }
+
+    /**
+     * Beauty print for fraction
+     */
     fun print() {
-        var a = if (mixedFraction) numerator / denominator else 0L
-        var b = numerator - a * denominator
-        var c = denominator
-        if (!mixedFraction && b % c == 0L) {
-            a = b / c
-            b = 0L
-        }
-        val neg = b * c < 0
-        if (neg) {
-            a = -a
-            b = Math.abs(b)
-            c = Math.abs(c)
-        }
-        val astr = if (a == 0L) if (neg) "-" else "" else a.toString()
-        val bstr = if (b == 0L) "" else b.toString()
-        val cstr = c.toString()
-
-        val sb0 = StringBuilder()
-        val sb1 = StringBuilder(astr)
-        val sb2 = StringBuilder()
-        if (astr.isNotEmpty()) {
-            sb1.append(' ')
-            (0..astr.length).forEach {
-                sb0.append(' ')
-                sb2.append(' ')
-            }
-        }
-        if (bstr.isNotEmpty()) {
-            val d = cstr.length - bstr.length
-            if (d >= 0) {
-                (1..d / 2).forEach { sb0.append(' ') }
-                sb0.append(bstr)
-                (1..cstr.length).forEach { sb1.append('-') }
-                sb2.append(cstr)
-            } else {
-                sb0.append(bstr)
-                (1..bstr.length).forEach { sb1.append('-') }
-                (d / 2..-1).forEach { sb2.append(' ') }
-                sb2.append(cstr)
-            }
-        }
-
-        if (b != 0L)
-            println(sb0)
-        if (a != 0L || c != 1L)
-            println(sb1)
-        if (c != 1L && b != 0L)
-            println(sb2)
-        if (a == 0L && b == 0L)
-            println(0)
+        print(format())
     }
 }
