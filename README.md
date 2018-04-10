@@ -1,5 +1,6 @@
-# SimpleCalculator
-Simple Calculator in Kotlin
+# SimpleCalculator  
+[![CircleCI](https://circleci.com/gh/xfl03/SimpleCalculator/tree/master.svg?style=svg)](https://circleci.com/gh/xfl03/SimpleCalculator/tree/master)  
+Simple Calculator in Kotlin  
 ## Build
 ````
 .\gradlew clean build
