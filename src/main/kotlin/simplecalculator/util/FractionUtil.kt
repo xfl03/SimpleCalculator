@@ -6,10 +6,11 @@ import simplecalculator.mixedFraction
 import simplecalculator.util.FractionUtil.fill
 import simplecalculator.util.FractionUtil.gcd
 import java.math.BigDecimal
+import java.math.BigInteger
 import java.math.RoundingMode
 
 object FractionUtil {
-    fun gcd(a: Long, b: Long): Long = if (b == 0L) a else gcd(b, a % b)
+    fun gcd(a: BigInteger, b: BigInteger): BigInteger = if (b == BigInteger.ZERO) a else gcd(b, a % b)
     fun fill(sb: StringBuilder, num: Int, ch: Char = ' ') {
         (0 until num).forEach { sb.append(ch) }
     }
@@ -22,26 +23,32 @@ object FractionUtil {
  * -------------
  *  denominator
  */
-data class Fraction(private var numerator: Long, private var denominator: Long = 1) {
+data class Fraction(private var numerator: BigInteger, private var denominator: BigInteger = BigInteger.ONE) {
     init {
-        if (denominator == 0L)
+        if (denominator == BigInteger.ZERO)
             throw ArithmeticException("/ by zero")
 
         if (intOnly) {
             numerator /= denominator
-            denominator = 1
+            denominator = BigInteger.ONE
         } else {
             //reduction
             val gcd = gcd(numerator, denominator)
             numerator /= gcd
             denominator /= gcd
 
-            if (denominator < 0) {
+            if (denominator < BigInteger.ZERO) {
                 numerator = -numerator
                 denominator = -denominator
             }
         }
     }
+
+    constructor(numerator: Long, denominator: Long = 1L) :
+            this(BigInteger(numerator.toString()), BigInteger(denominator.toString()))
+
+    constructor(numerator: Long, denominator: BigInteger) :
+            this(BigInteger(numerator.toString()), denominator)
 
     /**
      * this + f
@@ -75,7 +82,7 @@ data class Fraction(private var numerator: Long, private var denominator: Long =
             f.numerator * denominator
     )
 
-    override fun toString() = "$numerator" + (if (denominator == 1L) "" else " / $denominator")
+    override fun toString() = "$numerator" + (if (denominator == BigInteger.ONE) "" else " / $denominator")
 
     /**
      * Format fraction
@@ -107,9 +114,9 @@ data class Fraction(private var numerator: Long, private var denominator: Long =
     }
 
     private fun formatInteger(line0: StringBuilder, line1: StringBuilder, line2: StringBuilder) {
-        val a = if (mixedFraction || denominator == 1L) numerator / denominator else 0
+        val a = if (mixedFraction || denominator == BigInteger.ONE) numerator / denominator else BigInteger.ZERO
 
-        var aStr = (if (numerator < 0) "-" else "") + if (a != 0L) Math.abs(a) else ""
+        var aStr = (if (numerator < BigInteger.ZERO) "-" else "") + if (a != BigInteger.ZERO) a.abs() else ""
         if (aStr.isNotEmpty()) {
             aStr += " "
         }
@@ -120,7 +127,7 @@ data class Fraction(private var numerator: Long, private var denominator: Long =
     }
 
     private fun formatFraction(line0: StringBuilder, line1: StringBuilder, line2: StringBuilder) {
-        val bStr = Math.abs(if (mixedFraction || denominator == 1L) numerator % denominator else numerator).toString()
+        val bStr = (if (mixedFraction || denominator == BigInteger.ONE) numerator % denominator else numerator).abs().toString()
         if (bStr == "0")//No need to print fraction
             return
         val cStr = denominator.toString()
@@ -138,7 +145,7 @@ data class Fraction(private var numerator: Long, private var denominator: Long =
      */
     fun print() {
         print(format())
-        if (decimalPrint && denominator != 1L) {
+        if (decimalPrint && denominator != BigInteger.ONE) {
             //if decimal needed
             println()
             println("Decimal:")

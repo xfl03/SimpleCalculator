@@ -3,6 +3,7 @@ package simplecalculator
 import simplecalculator.util.Operator
 import simplecalculator.util.ExpressionUtil
 import simplecalculator.util.Fraction
+import java.math.BigInteger
 import java.text.ParseException
 import java.util.*
 
@@ -57,7 +58,7 @@ class Calculator(private val expression: String) {
 
                 if (numFlag)
                     if (lastPoint >= 0) {
-                        nums.push(nums.pop().add(Fraction(num, util.pow(10, lastPoint + 1))))
+                        nums.push(nums.pop().add(Fraction(num, BigInteger.TEN.pow(lastPoint + 1))))
                         lastPoint++
                     } else
                         nums.push(nums.pop().multiply(Fraction(10)).add(Fraction(num)))
