@@ -56,9 +56,10 @@ class Calculator(private val expression: String) {
                     num = -num
 
                 if (numFlag)
-                    if (lastPoint >= 0)
+                    if (lastPoint >= 0) {
                         nums.push(nums.pop().add(Fraction(num, util.pow(10, lastPoint + 1))))
-                    else
+                        lastPoint++
+                    } else
                         nums.push(nums.pop().multiply(Fraction(10)).add(Fraction(num)))
                 else
                     nums.push(Fraction(num))

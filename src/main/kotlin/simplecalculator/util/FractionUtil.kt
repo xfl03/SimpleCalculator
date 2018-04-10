@@ -1,9 +1,12 @@
 package simplecalculator.util
 
+import simplecalculator.decimalPrint
 import simplecalculator.intOnly
 import simplecalculator.mixedFraction
 import simplecalculator.util.FractionUtil.fill
 import simplecalculator.util.FractionUtil.gcd
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 object FractionUtil {
     fun gcd(a: Long, b: Long): Long = if (b == 0L) a else gcd(b, a % b)
@@ -135,5 +138,15 @@ data class Fraction(private var numerator: Long, private var denominator: Long =
      */
     fun print() {
         print(format())
+        if (decimalPrint && denominator != 1L) {
+            //if decimal needed
+            println()
+            println("Decimal:")
+            print(toBigDecimal().stripTrailingZeros().toPlainString())
+        }
+    }
+
+    fun toBigDecimal(): BigDecimal {
+        return BigDecimal(numerator).divide(BigDecimal(denominator), 16, RoundingMode.CEILING)
     }
 }

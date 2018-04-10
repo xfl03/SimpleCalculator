@@ -8,10 +8,12 @@ import java.text.ParseException
 var debugMode = false
 var fixRight = false
 var mixedFraction = false
+var decimalPrint = true
 var intOnly = false
 
 private var expression = ""
 fun main(args: Array<String>) {
+    parseArgs(args)
     val br = BufferedReader(InputStreamReader(System.`in`))
 
     try {
@@ -25,13 +27,15 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun parseArgs(args:Array<String>){
+private fun parseArgs(args: Array<String>) {
     if (args.contains("-d") || args.contains("--debug"))
         debugMode = true
     if (args.contains("-f") || args.contains("--fix"))
         fixRight = true
     if (args.contains("-m") || args.contains("--mixed"))
         mixedFraction = true
+    if (args.contains("-nd") || args.contains("--no-dec"))
+        decimalPrint = false
     if (args.contains("-i") || args.contains("--int"))
         intOnly = true
 }
